@@ -321,3 +321,5 @@ st.caption(f"Last updated: {st.session_state.last_update.strftime('%Y-%m-%d %H:%
 if auto_refresh:
     time.sleep(1)
     st.rerun()
+st.markdown("---")
+st.markdown("© 2025 Tauqeer Hussain. Licensed under the MIT License.")
