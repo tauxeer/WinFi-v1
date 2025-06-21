@@ -1,0 +1,135 @@
+import time
+import random
+
+# Mock device database
+devices = []
+
+# GHz options
+ghz_bands = [2.4, 5, 6]
+
+# Device structure template
+def generate_device(id):
+    return {
+        "name": f"Device-{id}",
+        "ip": f"192.168.1.{id}",
+        "mac": f"00:1B:44:11:3A:{id:02X}",
+        "ghz": random.choice(ghz_bands),
+        "priority": random.choice(["High", "Medium", "Low"]),
+        "enabled": True,
+        "signal": f"{random.randint(50, 100)}%"
+    }
+
+# Main menu
+def show_menu():
+    print("\n📶  Welcome to WiNFi v1 Terminal Dashboard")
+    print("-" * 45)
+    print("1. View connected devices")
+    print("2. Add a device")
+    print("3. Remove a device")
+    print("4. Set device priority")
+    print("5. Filter by GHz band")
+    print("6. Toggle device status")
+    print("7. Exit")
+    print("-" * 45)
+
+# Display devices
+def display_devices(filter_ghz=None):
+    print("\n📡 Connected Devices:")
+    if not devices:
+        print("  No devices connected.")
+        return
+
+    for i, d in enumerate(devices):
+        if filter_ghz and d["ghz"] != filter_ghz:
+            continue
+        status = "✅ Enabled" if d["enabled"] else "❌ Disabled"
+        print(f"{i+1}. {d['name']} | IP: {d['ip']} | MAC: {d['mac']} | {d['ghz']}GHz | Signal: {d['signal']} | Priority: {d['priority']} | {status}")
+
+# Add device
+def add_device():
+    device_id = len(devices) + 1
+    devices.append(generate_device(device_id))
+    print(f"✅ Device-{device_id} added.")
+
+# Remove device
+def remove_device():
+    display_devices()
+    try:
+        idx = int(input("Enter device number to remove: ")) - 1
+        if 0 <= idx < len(devices):
+            removed = devices.pop(idx)
+            print(f"🗑️ Removed {removed['name']}")
+        else:
+            print("❌ Invalid number.")
+    except:
+        print("❌ Input error.")
+
+# Set priority
+def set_priority():
+    display_devices()
+    try:
+        idx = int(input("Select device number: ")) - 1
+        if 0 <= idx < len(devices):
+            level = input("Enter priority (High/Medium/Low): ").capitalize()
+            if level in ["High", "Medium", "Low"]:
+                devices[idx]["priority"] = level
+                print(f"✅ Priority set to {level}")
+            else:
+                print("❌ Invalid level.")
+        else:
+            print("❌ Invalid number.")
+    except:
+        print("❌ Input error.")
+
+# Filter by GHz
+def filter_by_ghz():
+    try:
+        band = float(input("Enter GHz band (2.4 / 5 / 6): "))
+        if band in ghz_bands:
+            display_devices(filter_ghz=band)
+        else:
+            print("❌ Invalid GHz band.")
+    except:
+        print("❌ Input error.")
+
+# Toggle device enable/disable
+def toggle_device_status():
+    display_devices()
+    try:
+        idx = int(input("Select device number to toggle: ")) - 1
+        if 0 <= idx < len(devices):
+            devices[idx]["enabled"] = not devices[idx]["enabled"]
+            print("🔁 Device status toggled.")
+        else:
+            print("❌ Invalid number.")
+    except:
+        print("❌ Input error.")
+
+# Run dashboard
+def main():
+    while True:
+        show_menu()
+        choice = input("Select an option (1-7): ")
+
+        if choice == "1":
+            display_devices()
+        elif choice == "2":
+            add_device()
+        elif choice == "3":
+            remove_device()
+        elif choice == "4":
+            set_priority()
+        elif choice == "5":
+            filter_by_ghz()
+        elif choice == "6":
+            toggle_device_status()
+        elif choice == "7":
+            print("👋 Exiting WiNFi...")
+            break
+        else:
+            print("❌ Invalid option.")
+        time.sleep(1)
+
+# Start app
+if __name__ == "__main__":
+    main()
